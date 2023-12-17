@@ -1,0 +1,145 @@
+#include <iostream>
+#include <vector>
+#include<string>
+
+using std::vector;
+using std::string;
+
+
+//Die Klasse des Weihnachtsbaums
+class Weihnachtsbaum{
+    //Speichere die Hoehe nach Entgegennahme durch Konstruktor
+    private: 
+        int hoehe;
+        int stumpflaenge = 2*(hoehe/4) + 1;
+        int anzahlpunktevorstumpf;
+        int groesseletztezeile;
+        string aktuelle_zeile;
+        
+        //Erstelle die aktuelle Zeile, indem man zu einen string die passende Anzahl an punkten und danach # addiert
+        string erstelle_aktuelle_zeile(int hzaehler, int pzaehler)
+        {
+          for(int i = 0; i < pzaehler; i++)
+          {
+              aktuelle_zeile += ".";
+          }
+          for(int i = 0; i < hzaehler; i++)
+          {
+              aktuelle_zeile += "#";
+          }
+          
+          return aktuelle_zeile;
+        }
+        
+        //Zeichnet die Krone des Baums
+        void zeichne_krone(){
+            int hashtag_zaehler = 1;
+            int punkte_zaehler = hoehe -1;
+            for(int i = 0; i < hoehe; i++)
+            {
+                //zu der aktuellen Zeile werden punkte_zähler viele punkte hinzugefügt und dann hashtag_zähler viele #
+                aktuelle_zeile = erstelle_aktuelle_zeile(hashtag_zaehler, punkte_zaehler);
+                
+                //addiere die neue Zeile zur Zeichnung und setze die aktuelle Zeile anschließend wieder zurück;
+                std::cout<<aktuelle_zeile<<std::endl;
+                aktuelle_zeile = "";
+                
+                //Für die nächste Stufe wächst der Baum um # und die Punkte werden 1 weniger
+                hashtag_zaehler += 2;
+                punkte_zaehler -= 1;
+                
+            }
+            
+            //Für den Stumpf die größe der letzten Zeile speichern
+            groesseletztezeile = hashtag_zaehler -2;
+        }
+        
+        void zeichne_stumpf(){
+            anzahlpunktevorstumpf = (groesseletztezeile - stumpflaenge)/2;
+            string stumpfzeile = "";
+            
+            //--------------------------------------------------------------------------------------FEHLER: Hier sagt Moodle, dass ich zu viel Speicher beanspruchen würde
+                                                                                          Gleiches passiert bei der eleganteren Variante, einen String zu erstellen
+                                                                                              und die Zeichen dazu zu addieren. Ohne diesen Abschnitt compiliert
+                                                                                            es in 1 Sekunde, damit sagt es nach out of memory 512Mbit. HELP!
+            for(int i = 0; i < stumpflaenge; i++)
+            {
+                for(int i = 0; i < anzahlpunktevorstumpf; i++)
+                {
+                std::cout<<".";
+                }
+            
+                for(int i = 0; i < stumpflaenge; i++)
+                {
+                    std::cout<<"#";
+                }
+                
+                std::cout<<"\n";
+            }
+            std::cout<<"\n";
+            ----------------------------------------------------------------------------------------
+            
+            //Algemein: (Größe letzte Reihe - stumpflaenge) / 2 Punkte werden hinzugefügt, dann # ungerundet
+        }
+        
+    public:
+    //Konstruktor nimmt hoehe des baums entgegen
+    Weihnachtsbaum(int baum_hoehe){
+        this->hoehe = baum_hoehe;
+    }
+    
+    //Methode zeichnet Baum
+    void zeichne_baum(){
+        zeichne_krone();
+        zeichne_stumpf();
+            
+    }
+    
+};
+
+
+
+class Weihnachtswald{
+    private:
+        vector<Weihnachtsbaum> Baeume;
+        
+    public:
+    
+    void pflanze(int hoehe){
+        Weihnachtsbaum Baum = Weihnachtsbaum(hoehe);
+        Baeume.push_back(Baum);
+    }
+    
+    void zeichne()
+    {
+        //Bäume zeichnen
+        for(int i = 0; i < Baeume.size(); i++)
+        {
+            Baeume[i].zeichne_baum();
+        }
+        
+        //Den Speicher der Bäume leeren, sodass der Vektor nicht beim nächsten aufrufen des Programms dieselben Elemente + neue enthält
+        Baeume.clear();
+    }
+};
+
+
+int main()
+{
+    Weihnachtswald wald;
+    
+    int anzahl_baeume;
+    std::cin >> anzahl_baeume;
+
+    for(int i = 0; i < anzahl_baeume; i++) {
+        int hoehe;
+        std::cin >> hoehe;
+        if (hoehe < 3 || hoehe > 29) {
+            continue;
+        }
+    
+        wald.pflanze(hoehe);
+    }
+
+    wald.zeichne();
+}
